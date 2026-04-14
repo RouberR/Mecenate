@@ -8,7 +8,7 @@ export type Author = {
   isVerified?: boolean;
 };
 
-export type PostTier = 'free' | 'paid';
+export type PostTier = "free" | "paid";
 
 export type Post = {
   id: string;
@@ -33,3 +33,43 @@ export type PostsResponse = {
   };
 };
 
+export type PostDetailResponse = {
+  ok: boolean;
+  data: {
+    post: Post;
+  };
+};
+
+export type LikeResponse = {
+  ok: boolean;
+  data: {
+    isLiked: boolean;
+    likesCount: number;
+  };
+};
+
+export type Comment = {
+  id: string;
+  postId: string;
+  author: Author;
+  text: string;
+  createdAt: string;
+  likesCount?: number;
+  isLiked?: boolean;
+};
+
+export type CommentsResponse = {
+  ok: boolean;
+  data: {
+    comments: Comment[];
+    nextCursor: string | null;
+    hasMore: boolean;
+  };
+};
+
+export type CommentCreatedResponse = {
+  ok: boolean;
+  data: {
+    comment: Comment;
+  };
+};

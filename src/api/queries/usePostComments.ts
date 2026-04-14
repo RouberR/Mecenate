@@ -1,28 +1,24 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-import { getPosts } from "@/api/postsApi";
-import type { PostTier } from "@/api/types";
+import { getPostComments } from "@/api/postsApi";
 
-type FeedParams = {
-  limit?: number;
-  tier?: PostTier | "all";
-};
-
-export function useFeedPosts({ limit = 10, tier = "all" }: FeedParams = {}) {
+export function usePostComments(params: { postId: string; limit?: number }) {
+  const limit = params.limit ?? 20;
   return useInfiniteQuery({
-    queryKey: ["feed", { limit, tier }],
+    queryKey: ["comments", { postId: params.postId, limit }],
     initialPageParam: undefined as string | undefined,
     queryFn: async ({ pageParam }) => {
-      return await getPosts({
+      return await getPostComments({
+        postId: params.postId,
         limit,
         cursor: pageParam,
-        tier: tier === "all" ? undefined : tier,
       });
     },
-    placeholderData: (prev) => prev,
     getNextPageParam: (lastPage) => {
       if (!lastPage?.data?.hasMore) return undefined;
       return lastPage.data.nextCursor ?? undefined;
     },
+    enabled: Boolean(params.postId),
   });
 }
+

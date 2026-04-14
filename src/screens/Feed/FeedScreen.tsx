@@ -1,34 +1,70 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { FlatList, StyleSheet, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useFeedPosts } from "@/api/queries/useFeedPosts";
+import type { PostTier } from "@/api/types";
 import { Button } from "@/components/Buttons/Button";
+import { PostCard } from "@/components/PostCard";
+import {
+  SegmentedTabs,
+  type SegmentedTabItem,
+} from "@/components/SegmentedTabs";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { borderRadius, spacing, typography } from "@/constants/tokens";
-import { useTheme } from "@/hooks/use-theme";
-import { PostCard } from "@/screens/Feed/components/PostCard";
 import { Image } from "expo-image";
 
 export function FeedScreen() {
-  const theme = useTheme();
+  const [tier, setTier] = useState<PostTier | "all">("all");
+  const [pullRefreshing, setPullRefreshing] = useState(false);
+  const listRef = React.useRef<FlatList<any> | null>(null);
+
+  const onTierChange = useCallback((next: PostTier | "all") => {
+    setTier(next);
+    requestAnimationFrame(() => {
+      listRef.current?.scrollToOffset({ offset: 0, animated: true });
+    });
+  }, []);
+
   const {
     data,
     error,
     isLoading,
-    isRefetching,
     refetch,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useFeedPosts({ limit: 10 });
+  } = useFeedPosts({ limit: 10, tier });
 
   const posts = useMemo(
     () => data?.pages.flatMap((p) => p.data.posts) ?? [],
     [data],
   );
   const showError = Boolean(error) && posts.length === 0;
+
+  const tabItems = useMemo<SegmentedTabItem<PostTier | "all">[]>(
+    () => [
+      { key: "all", label: "Все" },
+      { key: "free", label: "Бесплатные" },
+      { key: "paid", label: "Платные" },
+    ],
+    [],
+  );
+
+  const tabsHeader = useMemo(
+    () => (
+      <ThemedView type="background" style={styles.tabsHeader}>
+        <SegmentedTabs
+          items={tabItems}
+          value={tier}
+          onChange={onTierChange}
+          style={styles.tabs}
+        />
+      </ThemedView>
+    ),
+    [onTierChange, tabItems, tier],
+  );
 
   return (
     <ThemedView style={styles.container}>
@@ -48,12 +84,24 @@ export function FeedScreen() {
           </ThemedView>
         ) : (
           <FlatList
+            ref={(r) => {
+              listRef.current = r;
+            }}
             data={posts}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContent}
+            ListHeaderComponent={tabsHeader}
+            stickyHeaderIndices={[0]}
             renderItem={({ item }) => <PostCard post={item} />}
-            refreshing={isRefetching && posts.length > 0}
-            onRefresh={() => refetch()}
+            refreshing={pullRefreshing}
+            onRefresh={async () => {
+              setPullRefreshing(true);
+              try {
+                await refetch();
+              } finally {
+                setPullRefreshing(false);
+              }
+            }}
             onEndReachedThreshold={0.4}
             onEndReached={() => {
               if (hasNextPage && !isFetchingNextPage) fetchNextPage();
@@ -90,9 +138,19 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContent: {
-    paddingTop: spacing.md,
+    paddingTop: spacing.sm,
     paddingBottom: spacing.lg,
-    gap: 16,
+    gap: 12,
+    paddingHorizontal: 0,
+  },
+  tabsHeader: {
+    paddingTop: spacing.sm,
+    paddingBottom: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  tabs: {
+    paddingHorizontal: 0,
+    paddingBottom: 0,
   },
   centerState: {
     flex: 1,

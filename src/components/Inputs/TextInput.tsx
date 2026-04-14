@@ -1,32 +1,62 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, TextInput as RNTextInput, type TextInputProps, View } from 'react-native';
+import React, { useMemo } from "react";
+import {
+  TextInput as RNTextInput,
+  StyleSheet,
+  type TextInputProps,
+  View,
+} from "react-native";
 
-import { ThemedText } from '@/components/ThemedText';
-import { borderRadius, typography } from '@/constants/tokens';
-import { useTheme } from '@/hooks/use-theme';
+import { ThemedText } from "@/components/ThemedText";
+import { borderRadius, typography } from "@/constants/tokens";
+import { useTheme } from "@/hooks/use-theme";
 
 type Props = TextInputProps & {
   label?: string;
   error?: string;
+  outlineBorderColor?: string;
+  backgroundColor?: string;
 };
 
-export function TextInput({ label, error, style, editable = true, ...rest }: Props) {
+export function TextInput({
+  label,
+  error,
+  style,
+  editable = true,
+  outlineBorderColor,
+  backgroundColor,
+  ...rest
+}: Props) {
   const theme = useTheme();
   const hasError = Boolean(error);
 
   const containerStyle = useMemo(
     () => [
       styles.container,
-      { backgroundColor: theme.backgroundElement, borderColor: hasError ? '#ff3b30' : 'transparent' },
+      {
+        backgroundColor: backgroundColor ?? theme.backgroundElement,
+        borderColor: hasError
+          ? "#ff3b30"
+          : (outlineBorderColor ?? "transparent"),
+      },
       !editable && styles.disabled,
     ],
-    [editable, hasError, theme.backgroundElement]
+    [
+      editable,
+      hasError,
+      outlineBorderColor,
+      backgroundColor,
+      theme.backgroundElement,
+    ],
   );
 
   return (
     <View style={styles.wrapper}>
       {label ? (
-        <ThemedText type="small" themeColor="textSecondary" style={styles.label}>
+        <ThemedText
+          type="small"
+          themeColor="textSecondary"
+          style={styles.label}
+        >
           {label}
         </ThemedText>
       ) : null}
@@ -60,7 +90,7 @@ const styles = StyleSheet.create({
     minHeight: 40,
     borderRadius: borderRadius.xl,
     paddingHorizontal: 12,
-    justifyContent: 'center',
+    justifyContent: "center",
     borderWidth: 1,
   },
   input: {
@@ -73,7 +103,6 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   errorText: {
-    color: '#ff3b30',
+    color: "#ff3b30",
   },
 });
-
