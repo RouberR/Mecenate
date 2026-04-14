@@ -42,3 +42,6 @@ export EXPO_PUBLIC_API_BASE_URL="https://k8s.mectest.ru/test-app"
 export EXPO_PUBLIC_AUTH_TOKEN="550e8400-e29b-41d4-a716-446655440000"
 npx expo start
 ```
+![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-14 at 20.07.02.png>)
+![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-14 at 20.07.31.png>)
+![alt text](<Simulator Screenshot - iPhone 17 - 2026-04-14 at 20.07.47.png>)
