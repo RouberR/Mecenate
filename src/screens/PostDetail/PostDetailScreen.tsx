@@ -1,12 +1,6 @@
 import { useLocalSearchParams } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  LayoutChangeEvent,
-  Platform,
-  StyleSheet,
-} from "react-native";
+import { FlatList, LayoutChangeEvent, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { usePostComments } from "@/api/queries/usePostComments";
@@ -25,6 +19,7 @@ import { ErrorStatus } from "@/components/StatusComponent/ErrorStatus";
 import { ThemedText } from "@/components/ThemedText";
 import { useTheme } from "@/hooks/use-theme";
 import { getCommentsLabel } from "@/utils/stringsFormat";
+import { KeyboardAvoidingView } from "react-native-keyboard-controller";
 
 export function PostDetailScreen() {
   const theme = useTheme();
@@ -40,20 +35,16 @@ export function PostDetailScreen() {
 
   const commentsQuery = usePostComments({ postId, limit: 20 });
   const { comments, sort, toggleSort } = useSortedComments(commentsQuery.data);
-  const { likeStateById, getLikeState, toggleLike } =
-    useCommentLikes(postId);
+  const { likeStateById, getLikeState, toggleLike } = useCommentLikes(postId);
 
   const listRef = useRef<FlatList<Comment> | null>(null);
   const [commentsHeaderY, setCommentsHeaderY] = useState<number | null>(null);
   const didAutoScrollRef = useRef(false);
 
-  const handleCommentsHeaderLayout = useCallback(
-    (event: LayoutChangeEvent) => {
-      const nextY = event.nativeEvent.layout.y;
-      setCommentsHeaderY((prev) => (prev === nextY ? prev : nextY));
-    },
-    [],
-  );
+  const handleCommentsHeaderLayout = useCallback((event: LayoutChangeEvent) => {
+    const nextY = event.nativeEvent.layout.y;
+    setCommentsHeaderY((prev) => (prev === nextY ? prev : nextY));
+  }, []);
 
   useEffect(() => {
     if (!shouldOpenComments) return;
@@ -76,8 +67,8 @@ export function PostDetailScreen() {
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+          behavior={"padding"}
+          keyboardVerticalOffset={8}
           style={styles.keyboardWrapper}
         >
           <PostDetailCommentsList
@@ -125,7 +116,6 @@ export function PostDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "row",
   },
   safeArea: {
     flex: 1,

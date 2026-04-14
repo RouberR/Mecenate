@@ -3,7 +3,7 @@ import { FlatList, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { useFeedPosts } from "@/api/queries/useFeedPosts";
-import type { PostTier } from "@/api/types";
+import type { Post, PostTier } from "@/api/types";
 import { PostCard } from "@/components/PostCard";
 import { ErrorStatus } from "@/components/StatusComponent/ErrorStatus";
 import { ThemedText } from "@/components/ThemedText";
@@ -35,9 +35,13 @@ export function FeedScreen() {
 
   const posts = useMemo(
     () => data?.pages.flatMap((p) => p.data.posts) ?? [],
-    [data],
+    [data?.pages],
   );
   const showError = Boolean(error) && posts.length === 0;
+
+  const renderItem = useCallback(({ item }: { item: Post }) => {
+    return <PostCard post={item} type="preview" />;
+  }, []);
 
   return (
     <ThemedView style={styles.container}>
@@ -60,8 +64,13 @@ export function FeedScreen() {
               // ListHeaderComponent={tabsHeader}
               // stickyHeaderIndices={[0]}
               showsVerticalScrollIndicator={false}
-              renderItem={({ item }) => <PostCard post={item} type="preview" />}
+              renderItem={renderItem}
               refreshing={pullRefreshing}
+              removeClippedSubviews={true}
+              initialNumToRender={8}
+              maxToRenderPerBatch={8}
+              windowSize={7}
+              updateCellsBatchingPeriod={50}
               onRefresh={async () => {
                 setPullRefreshing(true);
                 try {

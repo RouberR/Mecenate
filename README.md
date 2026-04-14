@@ -5,6 +5,8 @@ WS-документация: `https://k8s.mectest.ru/test-app/docs`
 
 ## Запуск (Expo Go)
 
+Последняя версия Expo Go 55 sdk  - https://expo.dev/go
+
 Установить зависимости:
 
 ```bash
@@ -19,6 +21,8 @@ npx expo start
 ```
 
 Далее отсканировать QR в **Expo Go** (iOS/Android).
+
+Последняя версия - https://expo.dev/go
 
 ## Переменные окружения
 
