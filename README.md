@@ -5,7 +5,11 @@ WS-документация: `https://k8s.mectest.ru/test-app/docs`
 
 ## Запуск (Expo Go)
 
-Последняя версия Expo Go 55 sdk  - https://expo.dev/go
+Последняя версия Expo Go 55 sdk - https://expo.dev/go
+
+![alt text](image.png)
+
+https://expo.dev/preview/update?message=update+fix&updateRuntimeVersion=1.0.0&createdAt=2026-04-14T16%3A50%3A37.861Z&slug=exp&projectId=6a4d0115-89de-4808-b96f-51e5f77266fa&group=798b57fd-c0f8-4541-84be-a497117b56e4
 
 Установить зависимости:
 
