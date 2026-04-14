@@ -1,9 +1,10 @@
-import React from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import React from "react";
+import { StyleSheet } from "react-native";
 
-import { ThemedText } from '@/components/ThemedText';
-import { typography } from '@/constants/tokens';
-import { useTheme } from '@/hooks/use-theme';
+import { ThemedText } from "@/components/ThemedText";
+import { typography } from "@/constants/tokens";
+import { useTheme } from "@/hooks/use-theme";
+import { AppPressable } from "../AppPressable";
 
 type Props = {
   title: string;
@@ -15,9 +16,14 @@ export function ButtonLink({ title, onPress, disabled = false }: Props) {
   const theme = useTheme();
 
   return (
-    <Pressable onPress={disabled ? undefined : onPress} style={({ pressed }) => pressed && !disabled && styles.pressed}>
-      <ThemedText style={[styles.text, { color: theme.primary }]}>{title}</ThemedText>
-    </Pressable>
+    <AppPressable
+      onPress={disabled ? undefined : onPress}
+      style={({ pressed }) => pressed && !disabled && styles.pressed}
+    >
+      <ThemedText style={[styles.text, { color: theme.primary }]}>
+        {title}
+      </ThemedText>
+    </AppPressable>
   );
 }
 
@@ -31,4 +37,3 @@ const styles = StyleSheet.create({
     opacity: 0.7,
   },
 });
-

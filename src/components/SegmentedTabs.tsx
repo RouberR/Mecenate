@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useState } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleProp, StyleSheet, View, ViewStyle } from "react-native";
 import Animated, {
   Easing,
   useAnimatedStyle,
@@ -11,6 +11,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { borderRadius, typography } from "@/constants/tokens";
 import { useTheme } from "@/hooks/use-theme";
+import { AppPressable } from "./AppPressable";
 
 export type SegmentedTabItem<T extends string> = {
   key: T;
@@ -21,7 +22,7 @@ type Props<T extends string> = {
   items: Array<SegmentedTabItem<T>>;
   value: T;
   onChange: (next: T) => void;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
 };
 
 function SegmentedTabsImpl<T extends string>({
@@ -63,7 +64,7 @@ function SegmentedTabsImpl<T extends string>({
     <ThemedView
       onLayout={onLayout}
       type="backgroundElement"
-      style={[styles.wrap, style]}
+      style={[styles.wrap, style, { borderColor: theme.borderColor }]}
     >
       {segmentWidth ? (
         <Animated.View
@@ -79,48 +80,55 @@ function SegmentedTabsImpl<T extends string>({
       {items.map((it) => {
         const active = it.key === value;
         return (
-          <Pressable
+          <AppPressable
             key={it.key}
             onPress={() => onChange(it.key)}
-            style={({ pressed }) => [
-              styles.segment,
-              pressed && styles.pressed,
-            ]}
+            style={({ pressed }) => [styles.segment, pressed && styles.pressed]}
           >
             <View style={styles.labelWrap}>
               <ThemedText
                 style={[
                   styles.text,
-                  { color: active ? "#FFFFFF" : theme.textSecondary },
+                  {
+                    color: active
+                      ? theme.backgroundElement
+                      : theme.textSecondary,
+                    fontWeight: active
+                      ? typography.weight.bold
+                      : typography.weight.medium,
+                  },
                 ]}
                 numberOfLines={1}
               >
                 {it.label}
               </ThemedText>
             </View>
-          </Pressable>
+          </AppPressable>
         );
       })}
     </ThemedView>
   );
 }
 
-export const SegmentedTabs = React.memo(SegmentedTabsImpl) as typeof SegmentedTabsImpl;
+export const SegmentedTabs = React.memo(
+  SegmentedTabsImpl,
+) as typeof SegmentedTabsImpl;
 
 const styles = StyleSheet.create({
   wrap: {
-    height: 40,
+    height: 38,
     borderRadius: borderRadius.full,
-    padding: 4,
     flexDirection: "row",
-    gap: 4,
     overflow: "hidden",
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
   },
   indicator: {
     position: "absolute",
-    left: 4,
-    top: 4,
-    bottom: 4,
+    left: 0,
+    top: 0,
+    bottom: 0,
     borderRadius: borderRadius.full,
   },
   segment: {
@@ -139,10 +147,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: typography.size.sm,
     lineHeight: 18,
-    fontWeight: typography.weight.semibold,
   },
   pressed: {
     opacity: 0.9,
   },
 });
-

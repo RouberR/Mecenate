@@ -7,6 +7,7 @@ import { Icon } from "@/components/Icon";
 import { ThemedText } from "@/components/ThemedText";
 import { borderRadius, spacing, typography } from "@/constants/tokens";
 import { useTheme } from "@/hooks/use-theme";
+import { AppPressable } from "../AppPressable";
 
 type Props = {
   post: Post;
@@ -30,12 +31,12 @@ export function PostCardMedia({ post, isPaid }: Props) {
           <View
             style={[styles.paidIconWrap, { backgroundColor: theme.primary }]}
           >
-            <Icon name="donate-solid" size={22} color="#FFFFFF" />
+            <Icon name="donate-solid" size={30} color="#FFFFFF" />
           </View>
           <ThemedText style={styles.paidText}>
             Контент скрыт пользователем.{"\n"}Доступ откроется после доната
           </ThemedText>
-          <Pressable
+          <AppPressable
             onPress={
               () => {}
               // router.push({ pathname: "/posts/[id]", params: { id: post.id } })
@@ -46,10 +47,10 @@ export function PostCardMedia({ post, isPaid }: Props) {
               style={[styles.paidButton, { backgroundColor: theme.primary }]}
             >
               <ThemedText style={styles.paidButtonText}>
-                Открыть за донат
+                Отправить донат
               </ThemedText>
             </View>
-          </Pressable>
+          </AppPressable>
         </View>
       ) : null}
     </View>
@@ -64,8 +65,8 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     marginHorizontal: -spacing.md,
     aspectRatio: 1,
-    borderRadius: 0,
-    backgroundColor: "#00000010",
+    // borderRadius: 0,
+    // backgroundColor: "#00000010",
   },
   paidOverlay: {
     position: "absolute",
@@ -73,7 +74,7 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    backgroundColor: "rgba(0,0,0,0.45)",
+    backgroundColor: "rgba(0,0,0,0.50)",
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing.md,

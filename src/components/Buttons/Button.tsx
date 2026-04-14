@@ -1,9 +1,10 @@
 import React from "react";
-import { ActivityIndicator, Pressable, StyleSheet, View } from "react-native";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
 
 import { ThemedText } from "@/components/ThemedText";
 import { borderRadius, spacing, typography } from "@/constants/tokens";
 import { useTheme } from "@/hooks/use-theme";
+import { AppPressable } from "../AppPressable";
 
 export type ButtonVariant = "primary" | "secondary";
 
@@ -32,7 +33,7 @@ export function Button({
   const isDisabled = disabled || loading;
 
   return (
-    <Pressable
+    <AppPressable
       onPress={isDisabled ? undefined : onPress}
       style={({ pressed }) => [
         styles.pressable,
@@ -50,7 +51,7 @@ export function Button({
           </ThemedText>
         )}
       </View>
-    </Pressable>
+    </AppPressable>
   );
 }
 

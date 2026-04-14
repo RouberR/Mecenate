@@ -20,6 +20,7 @@ export const Colors = {
     likeActiveText: "#FFEAF1",
     skeleton: "rgba(238,239,241,0.8)",
     chatMessage: "#D5C9FF",
+    borderColor: "#E8ECEF",
   },
   dark: {
     text: "#ffffff",
@@ -32,6 +33,7 @@ export const Colors = {
     likeActiveText: "#FFEAF1",
     skeleton: "rgba(238,239,241,0.12)",
     chatMessage: "#D5C9FF",
+    borderColor: "#E8ECEF",
   },
 } as const;
 

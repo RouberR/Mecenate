@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import {
   TextInput as RNTextInput,
   StyleSheet,
@@ -12,14 +12,12 @@ import { useTheme } from "@/hooks/use-theme";
 
 type Props = TextInputProps & {
   label?: string;
-  error?: string;
   outlineBorderColor?: string;
   backgroundColor?: string;
 };
 
 export function TextInput({
   label,
-  error,
   style,
   editable = true,
   outlineBorderColor,
@@ -27,27 +25,6 @@ export function TextInput({
   ...rest
 }: Props) {
   const theme = useTheme();
-  const hasError = Boolean(error);
-
-  const containerStyle = useMemo(
-    () => [
-      styles.container,
-      {
-        backgroundColor: backgroundColor ?? theme.backgroundElement,
-        borderColor: hasError
-          ? "#ff3b30"
-          : (outlineBorderColor ?? "transparent"),
-      },
-      !editable && styles.disabled,
-    ],
-    [
-      editable,
-      hasError,
-      outlineBorderColor,
-      backgroundColor,
-      theme.backgroundElement,
-    ],
-  );
 
   return (
     <View style={styles.wrapper}>
@@ -61,7 +38,16 @@ export function TextInput({
         </ThemedText>
       ) : null}
 
-      <View style={containerStyle}>
+      <View
+        style={[
+          styles.container,
+          {
+            backgroundColor: backgroundColor ?? theme.backgroundElement,
+            borderColor: theme.backgroundSelected,
+          },
+          !editable && styles.disabled,
+        ]}
+      >
         <RNTextInput
           placeholderTextColor={theme.textSecondary}
           style={[styles.input, { color: theme.text }, style]}
@@ -69,12 +55,6 @@ export function TextInput({
           {...rest}
         />
       </View>
-
-      {error ? (
-        <ThemedText type="small" style={styles.errorText}>
-          {error}
-        </ThemedText>
-      ) : null}
     </View>
   );
 }

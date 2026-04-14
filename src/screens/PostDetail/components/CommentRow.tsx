@@ -1,12 +1,13 @@
 import * as Haptics from "expo-haptics";
 import React, { memo } from "react";
-import { Pressable, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import type { Comment } from "@/api/types";
 import { AppImage } from "@/components/AppImage";
+import { AppPressable } from "@/components/AppPressable";
 import { LikeAction } from "@/components/Buttons/LikeAction";
 import { ThemedText } from "@/components/ThemedText";
-import { typography } from "@/constants/tokens";
+import { spacing, typography } from "@/constants/tokens";
 import { useTheme } from "@/hooks/use-theme";
 
 type Props = {
@@ -38,7 +39,7 @@ function CommentRowInner({ comment, likeState, onToggleLike }: Props) {
         </ThemedText>
       </View>
 
-      <Pressable
+      <AppPressable
         onPress={() => {
           void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(
             () => undefined,
@@ -50,7 +51,7 @@ function CommentRowInner({ comment, likeState, onToggleLike }: Props) {
         style={({ pressed }) => [styles.likeHit, pressed && styles.pressed]}
       >
         <LikeAction count={count} active={isLiked} variant="compact" />
-      </Pressable>
+      </AppPressable>
     </View>
   );
 }
@@ -62,7 +63,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 12,
-    paddingVertical: 10,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   avatar: {
     width: 40,
@@ -89,7 +91,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     minWidth: 44,
-    paddingLeft: 4,
   },
   pressed: {
     opacity: 0.7,

@@ -12,23 +12,25 @@ type CommentsQuery = {
   fetchNextPage: () => void;
 };
 
+type LikeState = { count: number; isLiked: boolean };
+
 type Props = {
   listRef: React.RefObject<FlatList<Comment> | null>;
   comments: Comment[];
-  commentLikes: Record<string, { count: number; isLiked: boolean }>;
-  setCommentLikes: React.Dispatch<
-    React.SetStateAction<Record<string, { count: number; isLiked: boolean }>>
-  >;
+  likeStateById: Record<string, LikeState>;
+  getLikeState: (comment: Comment) => LikeState;
+  onToggleLike: (comment: Comment) => void;
   commentsQuery: CommentsQuery;
   isLoading: boolean;
-  ListHeaderComponent: React.ReactElement;
+  ListHeaderComponent: React.ReactElement | null;
 };
 
 export function PostDetailCommentsList({
   listRef,
   comments,
-  commentLikes,
-  setCommentLikes,
+  likeStateById,
+  getLikeState,
+  onToggleLike,
   commentsQuery,
   isLoading,
   ListHeaderComponent,
@@ -37,29 +39,11 @@ export function PostDetailCommentsList({
     ({ item }: { item: Comment }) => (
       <CommentRow
         comment={item}
-        likeState={
-          commentLikes[item.id] ?? {
-            count: item.likesCount ?? 0,
-            isLiked: item.isLiked ?? false,
-          }
-        }
-        onToggleLike={() => {
-          setCommentLikes((prev) => {
-            const current = prev[item.id] ?? {
-              count: item.likesCount ?? 0,
-              isLiked: item.isLiked ?? false,
-            };
-            const nextLiked = !current.isLiked;
-            const nextCount = Math.max(0, current.count + (nextLiked ? 1 : -1));
-            return {
-              ...prev,
-              [item.id]: { count: nextCount, isLiked: nextLiked },
-            };
-          });
-        }}
+        likeState={getLikeState(item)}
+        onToggleLike={() => onToggleLike(item)}
       />
     ),
-    [commentLikes, setCommentLikes],
+    [getLikeState, onToggleLike],
   );
 
   return (
@@ -69,7 +53,8 @@ export function PostDetailCommentsList({
       }}
       data={comments}
       keyExtractor={(item) => item.id}
-      extraData={commentLikes}
+      extraData={likeStateById}
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.listContent}
       onEndReachedThreshold={0.6}
       onEndReached={() => {
@@ -101,10 +86,11 @@ export function PostDetailCommentsList({
 
 const styles = StyleSheet.create({
   listContent: {
-    paddingTop: 4,
     paddingBottom: spacing.lg,
     gap: 0,
-    paddingHorizontal: spacing.md,
+    backgroundColor: "white",
+    borderBottomLeftRadius: 16,
+    borderBottomRightRadius: 16,
   },
   emptyText: {
     paddingHorizontal: 4,

@@ -6,81 +6,65 @@ import { AppImage } from "@/components/AppImage";
 import { ThemedText } from "@/components/ThemedText";
 import { typography } from "@/constants/tokens";
 
-type FeedProps = {
-  variant: "feed";
-  author: Author;
-};
-
-type DetailProps = {
-  variant: "detail";
+type Props = {
+  variant: "feed" | "detail";
   author?: Author;
 };
 
-type Props = FeedProps | DetailProps;
+export function PostCardHeader({ variant, author }: Props) {
+  if (!author) return null;
+  const isFeed = variant === "feed";
 
-export function PostCardHeader(props: Props) {
-  if (props.variant === "feed") {
-    const { author } = props;
-    return (
-      <View style={styles.header}>
-        <AppImage source={{ uri: author.avatarUrl }} style={styles.avatar} />
-        <View style={styles.headerText}>
-          <ThemedText style={styles.authorName}>{author.displayName}</ThemedText>
-        </View>
-      </View>
-    );
-  }
-
-  const { author } = props;
   return (
-    <View style={styles.topAuthorRow}>
-      {author?.avatarUrl ? (
+    <View style={[styles.container, isFeed ? styles.feed : styles.detail]}>
+      {author.avatarUrl ? (
         <AppImage
           source={{ uri: author.avatarUrl }}
-          style={styles.topAvatar}
+          style={[
+            styles.avatar,
+            isFeed ? styles.avatarFeed : styles.avatarDetail,
+          ]}
         />
       ) : null}
-      <ThemedText style={styles.topAuthorName}>
-        {author?.displayName ?? ""}
-      </ThemedText>
+
+      <ThemedText style={styles.name}>{author.displayName}</ThemedText>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  container: {
     flexDirection: "row",
     alignItems: "center",
+  },
+
+  feed: {
     gap: 12,
   },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#00000010",
-  },
-  headerText: {
-    flex: 1,
-  },
-  authorName: {
-    fontSize: typography.size.md,
-    lineHeight: 20,
-    fontWeight: typography.weight.bold,
-  },
-  topAuthorRow: {
-    flexDirection: "row",
-    alignItems: "center",
+
+  detail: {
     gap: 10,
     paddingTop: 2,
     paddingBottom: 6,
   },
-  topAvatar: {
+
+  avatar: {
+    backgroundColor: "#00000010",
+  },
+
+  avatarFeed: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+
+  avatarDetail: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: "#00000010",
   },
-  topAuthorName: {
+
+  name: {
     fontSize: typography.size.md,
     lineHeight: 20,
     fontWeight: typography.weight.bold,
